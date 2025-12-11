@@ -5,11 +5,12 @@ void display_welcome() {
     write(STDOUT_FILENO, WELCOME_TEXT, strlen(WELCOME_TEXT));
 }
 
-void display_prompt() {
+void display_exit_instruction() {
     // Print the exit instructions
     write(STDOUT_FILENO, EXIT_TEXT, strlen(EXIT_TEXT));
+}
+
+void display_prompt() {
     // Print the shell prompt
     write(STDOUT_FILENO, SHELL_PROMPT, strlen(SHELL_PROMPT));
 }
-
-

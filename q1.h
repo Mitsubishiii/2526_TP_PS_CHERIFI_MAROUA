@@ -12,7 +12,9 @@
 #define SHELL_PROMPT "enseash % "
 
 void display_welcome();
+void display_exit_instruction();
 void display_prompt();
+
 
 #endif // Q1_H
 
