@@ -1,7 +1,7 @@
 #ifndef Q2_H
 #define Q2_H
 
-#define MAX_COMMAND_SIZE 1024
+#define COMMAND_MAXSIZE 1024
 #define NULL_CHAR '\0'
 
 void execute_command();

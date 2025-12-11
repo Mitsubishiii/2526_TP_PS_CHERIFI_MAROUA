@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+
 #define WELCOME_TEXT "Bienvenue dans le Shell ENSEA.\n"
 #define EXIT_TEXT "Pour quitter, tapez 'exit'.\n"
 #define SHELL_PROMPT "enseash % "

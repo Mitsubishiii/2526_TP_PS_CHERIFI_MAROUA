@@ -4,7 +4,7 @@
 void read_user_input(char *command) {
 
     // Read input 
-    ssize_t bytes_read = read(STDIN_FILENO, command, MAX_COMMAND_SIZE);
+    ssize_t bytes_read = read(STDIN_FILENO, command, COMMAND_MAXSIZE);
 
     // If nothing was read or an error occurred
     if (bytes_read <= 0) {

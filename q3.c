@@ -5,7 +5,7 @@
 int read_and_process_input(char *command) {
 
     // Read input 
-    ssize_t bytes_read = read(STDIN_FILENO, command, MAX_COMMAND_SIZE);
+    ssize_t bytes_read = read(STDIN_FILENO, command, COMMAND_MAXSIZE);
 
     // Replace the newline character at the end with '\0' (NULL_CHAR)
     command[bytes_read - 1] = NULL_CHAR;
