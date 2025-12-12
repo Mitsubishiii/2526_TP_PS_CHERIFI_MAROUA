@@ -16,7 +16,7 @@ At startup, the shell must:
 
 This question focuses on **basic output handling** using low-level system calls.
 
-- Output is written directly to **STDOUT** using write().
+- Output is written directly to **STDOUT** using `write()`.
 - No higher-level I/O functions such as printf are used.
 - No user input is processed at this stage.
 
@@ -72,7 +72,8 @@ The shell must terminate cleanly in two cases:
 - When `read()` returns `0`, indicating an end-of-file (Ctrl+D).
 
 In both cases, the shell exits after displaying a termination message.
--> These conditions allow the shell to be closed in a controlled and predictable manner
+
+-> These conditions allow the shell to be closed in a controlled and predictable manner.
 
 
 
