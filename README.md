@@ -1,18 +1,20 @@
-# 2526_TP_PS_CHERIFI_MAROUA
+# TP PROGRAMMATION SYSTEME
+#### CHERIFI Sacha
+#### IDBAHA Maroua
 
 This project implements a minimal Unix shell named **enseash**, developed incrementally through several questions.
 Each step introduces core system programming concepts such as low-level I/O , process creation, and process termination handling.
 
 ## Question 1 — Welcome Message and Prompt Display
 
-### Objective:
+#### Objective:
 
 At startup, the shell must:
 - display a welcome message,
 - indicate how to exit the shell,
 - then show a prompt inviting the user to enter commands.
 
-### Implementation Principle:
+#### Implementation Principle:
 
 This question focuses on **basic output handling** using low-level system calls.
 
@@ -20,10 +22,14 @@ This question focuses on **basic output handling** using low-level system calls.
 - No higher-level I/O functions such as printf are used.
 - No user input is processed at this stage.
 
+#### Output
+
+![Shell output](img/q10.png)
+
 
 ## Question 2 — Reading and Executing Simple Commands
 
-### Q2a — Reading User Input
+#### Q2a — Reading User Input
 
 The shell waits for user input using the system call :
 
@@ -38,7 +44,7 @@ read(STDIN_FILENO, buffer, size);
 - The input buffer is converted into a valid C string by appending the null terminator (`\0`).
 - Only simple commands without arguments are handled at this stage.
 
-###  Q2b — Executing a Command
+####  Q2b — Executing a Command
 
 To execute a command, the shell relies on **process creation and execution** mechanisms provided by Unix systems.
 
@@ -52,7 +58,7 @@ This separation ensures that:
 - the shell itself continues running,
 - the executed command runs independently in the child process.
 
-### Q2c — Command Loop
+#### Q2c — Command Loop
 
 The shell execution logic is implemented inside an infinite loop (`while(1)`) :
 
@@ -63,33 +69,54 @@ The shell execution logic is implemented inside an infinite loop (`while(1)`) :
 
 This allows the shell to continuously process commands until it is explicitly terminated.
 
+#### Summary
+
+```mermaid
 flowchart TD
-    A[Afficher le prompt] --> B[read(STDIN_FILENO)]
-    B -->|EOF| Z[Quitter le shell]
-    B --> C[Nettoyer le \\n et ajouter \\0]
-    C --> D[fork()]
-    D -->|pid==0| E[execlp(command)]
-    E -->|échec| F[perror + exit]
-    D -->|pid>0| G[wait(&status)]
-    G --> A
+    A["Display prompt to user"] --> B["Read user input from keyboard"]
+    B --> C["Clean input remove newline and add null terminator"]
+    C --> D["Create a new child process to run the command"]
+    D -->|Child process| E["Child executes the command"]
+    E -->|If command fails| F["Child prints error message and terminates"]
+    D -->|Parent process| G["Parent waits for the child to finish"]
+    G --> H["Parent resumes execution after child finishes"]
+    H --> A
+```
 
+#### Output
 
+![Shell output](img/q21.png)
+![Shell output](img/q22.png)
 
-## Question 3 — Handling exit and Ctrl+D
+#### Question 3 — Handling exit and Ctrl+D
 
-**Objective:**
+#### Objective:
 The shell must terminate cleanly in two cases:
 - When the user enters the `exit` command.
 - When `read()` returns `0`, indicating an end-of-file (Ctrl+D).
 
 In both cases, the shell exits after displaying a termination message.
 
--> These conditions allow the shell to be closed in a controlled and predictable manner.
+These conditions allow the shell to be closed in a controlled and predictable manner.
 
+#### Summary
+
+```mermaid
+flowchart TD
+    A["Display prompt"] --> B["read STDIN and replace newline with null"]
+    B -->|Ctrl+D| C["Print exit message and exit shell"]
+    B -->|Input is 'exit'| C
+    B -->|Empty command Enter| D["Continue loop without executing"]
+    B -->|Any other command| E["Continue to execute command"]
+```
+#### Output
+
+![Shell output](img/q31.png)
+![Shell output](img/q32.png)
 
 
 ## Question 4 — Displaying the Command Termination Status
-**Objective:**
+#### Objective:
 
 After executing a command, the shell updates its prompt to indicate how the previous command terminated.
 The prompt format becomes:
@@ -98,7 +125,7 @@ enseash [exit:N] %
 ```
 where N represents the return code of the executed command.
 
-**Termination Analysis :**
+#### Termination Analysis :
 
 When a command finishes, the parent process retrieves its termination status using the system call:
 ```c
@@ -111,13 +138,29 @@ Two termination cases exist in Unix systems :
 
 2- *Termination by signal* : the command is interrupted by a signal (e.g. segmentation fault, kill).
 
-**Implemented Scope :**
+#### Implemented Scope :
 For now, only the normal termination case is implemented.
 As a result:
 - The shell displays the return code of commands that terminate normally.
 - The termination by signal is not handled yet.
 
 
+#### Summary
+
+```mermaid
+flowchart TD
+    A["Check status of previous command"] --> B["status < 0 ?"]
+    B -->|Yes| C["Display simple shell prompt"]
+    B -->|No| D["WIFEXITED(status) ?"]
+    D -->|Yes| E["Display previous command exit code"]
+    D -->|No| F["WIFSIGNALED(status) ?"]
+    F -->|Yes| G["Display signal number that terminated command"]
+    F -->|No| C
+```
+
+#### Output
+
+![Shell output](img/q40.png)
 
 
 
