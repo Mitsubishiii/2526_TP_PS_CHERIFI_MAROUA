@@ -63,6 +63,17 @@ The shell execution logic is implemented inside an infinite loop (`while(1)`) :
 
 This allows the shell to continuously process commands until it is explicitly terminated.
 
+flowchart TD
+    A[Afficher le prompt] --> B[read(STDIN_FILENO)]
+    B -->|EOF| Z[Quitter le shell]
+    B --> C[Nettoyer le \\n et ajouter \\0]
+    C --> D[fork()]
+    D -->|pid==0| E[execlp(command)]
+    E -->|échec| F[perror + exit]
+    D -->|pid>0| G[wait(&status)]
+    G --> A
+
+
 
 ## Question 3 — Handling exit and Ctrl+D
 
