@@ -54,7 +54,7 @@ This separation ensures that:
 
 ### Q2c — Command Loop
 
-The shell execution logic is implemented inside an infinite loop ( while(1) ) :
+The shell execution logic is implemented inside an infinite loop (`while(1)`) :
 
 - The prompt is displayed at the beginning of each iteration
 - User input is read and processed at each loop iteration
