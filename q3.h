@@ -6,7 +6,7 @@
 #define SHELL_CONTINUE 0
 #define SHELL_EXIT 1
 
-int read_and_process_input();
+int read_and_process_input(char *command);
 
 #endif // Q3_H
 

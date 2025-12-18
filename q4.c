@@ -22,8 +22,4 @@ void display_status(int status) {
         buffer_len = snprintf(buffer, sizeof(buffer), MSG_SIGN, WTERMSIG(status));
         write(STDOUT_FILENO, buffer, buffer_len);
     }
-    else {
-        // Fallback to simple prompt
-        write(STDOUT_FILENO, SHELL_PROMPT, strlen(SHELL_PROMPT));
-    }
 }

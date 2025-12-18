@@ -7,6 +7,6 @@
 #define MSG_EXIT "enseash [exit:%d] %% "
 #define MSG_SIGN "enseash [sign:%d] %% "
 
-void display_status();
+void display_status(int status);
 
 #endif // Q4_H

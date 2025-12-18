@@ -15,7 +15,7 @@ int main(void) {
 
     while(1) {
 
-        display_status(status);
+        display_status_and_time(status);
 
         int result = read_and_process_input(command);
             if (result == SHELL_EXIT) {
@@ -23,7 +23,10 @@ int main(void) {
             }
 
             if (result == SHELL_CONTINUE) {
+                timer_start();
                 execute_command(command, &status);
+                timer_end();
+
             }
         }
     return 0;
