@@ -16,6 +16,8 @@ q6.c
 q6.h
 q7.c
 q7.h
+q8.c
+q8.h
 README.md
 test_signal_q4
 test_signal_q4.c

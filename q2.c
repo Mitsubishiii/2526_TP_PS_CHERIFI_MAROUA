@@ -17,9 +17,11 @@ void read_user_input(char *command) {
 
     // Replace the newline character at the end with '\0' (NULL_CHAR)
     command[bytes_read - 1] = NULL_CHAR;
+    
 }
 
 void execute_command(char *command, int *status) {
+
     // Create a new process
     pid_t pid = fork();
 
@@ -34,11 +36,13 @@ void execute_command(char *command, int *status) {
 
         // If execlp fails, terminate child to avoid running parent code
         exit(EXIT_FAILURE);
+
     }
 
     else {  
 
         // Parent process: wait for the child to finish         
         wait(status);
+
     }
 }

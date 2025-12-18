@@ -8,19 +8,21 @@
 
 // Find the redirection symbol and return its type and position 
 int find_redirection(char **args, int *position) {
+
+    // Iterate through arguments until the end of the array
     for (int i = 0; args[i] != NULL; i++) {
+
+        // Check for input redirection symbol   
         if (strcmp(args[i], "<") == 0)  { 
             *position = i; 
             return REDIR_IN; 
         }
+
+        // Check for output redirection symbol
         if (strcmp(args[i], ">") == 0)  {
             *position = i; 
             return REDIR_OUT;
         }
-        // if (strcmp(args[i], "|") == 0)  {
-        //     *position = i; 
-        //     return PIPE; 
-        // }
     }
     return REDIR_NONE;
 }
@@ -62,11 +64,7 @@ void apply_redirection(char **args, int position, int type) {
     args[position] = NULL;
 }
 
-void execute_complex_command_redir(char **args, int *status) {
-    int position = 0;
-
-    // Identify if there is a redirection before forking 
-    int type = find_redirection(args, &position);
+void execute_complex_command_redir(char **args, int *status, int position, int type) {
 
     // Create a new process
     pid_t pid = fork();
@@ -75,9 +73,7 @@ void execute_complex_command_redir(char **args, int *status) {
     if (pid == 0) {  
 
         // If a redirection exists, apply it inside the child
-        if (type == REDIR_IN || type == REDIR_OUT) {
-            apply_redirection(args, position, type);
-        }
+        apply_redirection(args, position, type);
 
         // Execute the command 
         execvp(args[0], args);

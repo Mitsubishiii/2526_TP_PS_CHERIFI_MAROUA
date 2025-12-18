@@ -12,6 +12,6 @@
 
 int find_redirection(char **args, int *position);
 void apply_redirection(char **args, int position, int type);
-void execute_complex_command_redir(char **args, int *status);
+void execute_complex_command_redir(char **args, int *status, int position, int type);
 
 #endif //QUESTION7_H

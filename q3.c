@@ -29,6 +29,7 @@ int read_and_process_input(char *command) {
 
     // Case 4: Any other command, continue and execute it
     return SHELL_CONTINUE;
+    
 }
 
 

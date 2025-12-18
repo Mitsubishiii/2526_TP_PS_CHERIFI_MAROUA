@@ -19,9 +19,11 @@ void find_arguments(char *command, char **args) {
     
     // End the array
     args[i] = NULL; 
+    
 }
 
 void execute_complex_command(char **args, int *status) {
+
     // Create a new process
     pid_t pid = fork();
 
@@ -36,6 +38,7 @@ void execute_complex_command(char **args, int *status) {
 
         // If execlp fails, terminate child to avoid running parent code
         exit(1);
+
     }
     else {
         wait(status);
