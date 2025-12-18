@@ -46,10 +46,8 @@ void execute_complex_command_pipe(char **args, int *status, int position) {
     args[position] = NULL;         
     char **args2 = &args[position + 1]; 
 
-    // Create a new processes
+    // Create a new proces
     pid_t pid1 = fork();
-    pid_t pid2 = fork();
-
 
     // First child: execute left command
     if (pid1 == 0) { 
@@ -68,6 +66,9 @@ void execute_complex_command_pipe(char **args, int *status, int position) {
         // If execlp fails, terminate child to avoid running parent code
         exit(EXIT_FAILURE);
     }
+
+    // Create a new proces
+    pid_t pid2 = fork();
 
     // Second child: execute right command
     if (pid2 == 0) { 
@@ -92,6 +93,7 @@ void execute_complex_command_pipe(char **args, int *status, int position) {
     close(fd_write);
 
     // Wait for both children to finish
-    wait(status);
-    wait(status);
+    waitpid(pid1, status, WAIT_CHILD);
+    waitpid(pid2, status, WAIT_CHILD);
+
 }
