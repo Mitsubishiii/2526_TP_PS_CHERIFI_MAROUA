@@ -9,8 +9,8 @@
 extern struct timespec time_start ;
 extern struct timespec time_end ;
 
-void start_timer(void);
-void end_timer(void);
+void timer_start(void);
+void timer_end(void);
 int get_time(void);
 void display_status_and_time(int status);
 
