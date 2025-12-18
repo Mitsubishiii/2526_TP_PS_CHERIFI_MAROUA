@@ -28,8 +28,8 @@ int find_redirection_and_pipe(char **args, int *position) {
 }
 
 void execute_complex_command_pipe(char **args, int *status, int position) {
-
     
+    // File descriptors for the pipe: fds[0] for reading, fds[1] for writing
     int fds[2]; 
     
     // Create the pipe
@@ -55,7 +55,7 @@ void execute_complex_command_pipe(char **args, int *status, int position) {
     if (pid1 == 0) { 
         // Redirect stdout to pipe write end
         dup2(fd_write, STDOUT_FILENO);
-        
+
         close(fd_read); 
         close(fd_write); 
 
