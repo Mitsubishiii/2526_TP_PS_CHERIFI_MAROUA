@@ -88,7 +88,7 @@ flowchart TD
 ![Shell output](img/q21.png)
 ![Shell output](img/q22.png)
 
-#### Question 3 — Handling exit and Ctrl+D
+## Question 3 — Handling exit and Ctrl+D
 
 #### Objective:
 The shell must terminate cleanly in two cases:
@@ -212,7 +212,7 @@ flowchart TD
     F -->|Yes| G["Display signal number that terminated command"]
 ```
 
-## Question 5 - 
+## Question 5 - Measuring Command Execution Time
 
 ###  Objective
 
