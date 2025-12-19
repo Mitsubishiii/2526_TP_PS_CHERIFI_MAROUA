@@ -272,8 +272,7 @@ To run a command such as:
 ```text
 fortune -s osfortune
 ```
-
-the shell must convert the string into an array like:
+The shell must convert the string into an array like:
 
 ```c
 args[0] = "fortune";
@@ -282,14 +281,14 @@ args[2] = "osfortune";
 args[3] = NULL;
 ```
 This array format is mandatory because `execvp()` expects`:
-- args[0] = program name
-- args = NULL-terminated array of arguments
+- `args[0]` = program name
+- `args = NULL` terminated array of arguments
 
 To achieve this, the function:
 ```c
 void find_arguments(char *command, char **args);
 ```
-splits the string using spaces as separators, and stores each token into `args.
+splits the string using spaces as separators, and stores each token into `args`.
 
 To prevent buffer overflow, the maximum number of tokens stored is limited by:
 ```c
@@ -307,7 +306,7 @@ Prototype:
 void execute_complex_command(char **command, int *status);
 ```
 
-execvp(args[0], args) searches the program in the system PATH (like a real shell).
+`execvp(args[0], args)` searches the program in the system PATH (like a real shell).
 If execution fails, the child prints an error using perror("enseash") and exits with code 1.
 
 ## Output
