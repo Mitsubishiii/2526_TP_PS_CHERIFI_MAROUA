@@ -280,7 +280,7 @@ args[1] = "-s";
 args[2] = "osfortune";
 args[3] = NULL;
 ```
-This array format is mandatory because `execvp()` expects`:
+This array format is mandatory because `execvp()` expects:
 - `args[0]` = program name
 - `args = NULL` terminated array of arguments
 
@@ -307,6 +307,7 @@ void execute_complex_command(char **command, int *status);
 ```
 
 `execvp(args[0], args)` searches the program in the system PATH (like a real shell).
+
 If execution fails, the child prints an error using perror("enseash") and exits with code 1.
 
 ## Output
@@ -348,7 +349,74 @@ flowchart TD
     E --> F["Shell ready for next command"]
 ```
 
-## Question 7 - 
+## Question 7 - I/O Redirections 
+
+###  Objective
+
+Add support for basic redirections in the shell:
+- `>` redirect stdout (command output) to a file
+- `<` redirect stdin (command input) from a file
+
+###  Principle
+
+A Unix program normally communicates using standard file descriptors:
+- `STDIN_FILENO` → input (keyboard)
+- `STDOUT_FILENO` → output (terminal)
+  
+Redirection means: **replace STDIN or STDOUT by a file descriptor obtained with** `open(), using:
+- `dup2(fd, STDIN_FILENO)` for `<`
+- `dup2(fd, STDOUT_FILENO)` for `>`
+
+The redirection must be applied inside the child process (after `fork()` and before `execvp()`) so that the shell itself is not affected.
+
+###  Implementation Steps
+
+*1. **Detect the redirection symbol***
+
+The function `find_redirection()` scans the argument array to locate `<` or `>`:
+- if `<` is found → `REDIR_IN`
+- if `>` is found → `REDIR_OUT`
+- otherwise → `REDIR_NONE`
+  
+It also returns the position of the symbol in `args[]`.
+
+*2. **Apply the redirection in the child process***
+
+The function `apply_redirection()`:
+
+ **opens the file depending on the redirection type:**
+
+- `<` → `open(file, O_RDONLY)`
+- `>` → `open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644)`
+
+**replaces STDIN or STDOUT using `dup2()`:**
+
+- `<` → `dup2(fd, STDIN_FILENO)`
+- `>` → `dup2(fd, STDOUT_FILENO)`
+
+**closes the file descriptor and removes the redirection tokens from the argument list:**
+```c
+args[position] = NULL;
+```
+This prevents `execvp()` from receiving `<` or `>` as normal command arguments.
+
+*3. **Execute the command normally***
+
+The function `execute_complex_command_redir()`:
+- creates a child process with `fork()`
+- the child applies redirection and executes the command with `execvp()`
+- the parent waits for termination using `wait()`
+
+#### Output
+
+With this implementation:
+- `ls > log.txt` writes the command output into the file instead of the terminal
+- `wc -l < log.txt` reads the file as input instead of waiting for keyboard input
+
+  ![Shell output](img/q71.png)
+  ![Shell output](img/q72.png)
+  
+This reproduces the standard shell behaviour for basic I/O redirections.
 
 #### Summary
 
@@ -410,14 +478,17 @@ flowchart TD
     F --> J["Shell ready for next command"]
 ```
 
+## Question 8 - 
+
+
+
+
+
 
 #### Output
 
-![Shell output](img/q71.png)
+![Shell output](img/q80.png)
 
-![Shell output](img/q72.png)
-
-## Question 8 - 
 
 #### Summary
 
@@ -452,10 +523,6 @@ flowchart TD
     P --> Q["waitpid(pid2)"]
     Q --> R["Shell ready for next command"]
 ```
-
-#### Output
-
-![Shell output](img/q80.png)
 
 
 
