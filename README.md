@@ -512,9 +512,9 @@ Finally:
 
 #### Detect the pipe symbol
 
-The function `find_redirection_and_pipe()` scans `args[] to locate:
+The function `find_redirection_and_pipe()` scans `args[]` to locate:
 - `<` → `REDIR_IN`
-- `>` → `REDIR_OUT
+- `>` → `REDIR_OUT`
 - `|` → `PIPE`
 - otherwise → `REDIR_NONE`
 It also stores the symbol position in `position`.
@@ -531,13 +531,14 @@ char **args2 = &args[position + 1];
 This operation creates two independent argument arrays:
 - `args` → left command (before `|`)
 - `args2` → right command (after `|`)
+  
 The `|` symbol itself is removed so it is not passed to `execvp()`.
 
 ####  Execute both commands with `pipe + fork + dup2`
 
 The function `execute_complex_command_pipe()` performs the following steps:
 
-##### Create pipe
+#### Create pipe
 
 ```c
 pipe(fds);
@@ -549,7 +550,7 @@ This creates a unidirectional communication channel:
 
 ---
 
-##### Fork child 1 (left command)
+#### Fork child 1 (left command)
 
 The first child executes the command located **before** the pipe symbol `|`.
 
@@ -566,7 +567,7 @@ execvp(args[0], args);
 ```
 ---
 
-##### Fork child 2 (right command)
+#### Fork child 2 (right command)
 
 The second child executes the command located **after** the pipe symbol `|`.
 
@@ -582,7 +583,7 @@ execvp(args2[0], args2);
 ```
 ---
 
-#####  Parent process
+####  Parent process
 
 The parent process:
 - closes both ends of the pipe (important to avoid blocking)
@@ -596,7 +597,14 @@ waitpid(pid2, status, 0);
 This ensures that the pipeline execution is completed before returning to the shell prompt.
 
 ### Output
+
+The command `ls | sort` demonstrates the pipe mechanism.
+
 ![Shell output](img/q80.png)
+
+The output of `ls` is redirected to the input of `sort`, resulting in an alphabetically sorted list of files.
+
+The correct output confirms that the pipe redirection is correctly implemented.
 
 ### Summary
 *(**find_redirection_and_pipe**) we only add strcmp for "|" to (**find_redirection**) of question 7.*
@@ -630,6 +638,7 @@ flowchart TD
     P --> Q["waitpid(pid2)"]
     Q --> R["Shell ready for next command"]
 ```
+
 
 
 
