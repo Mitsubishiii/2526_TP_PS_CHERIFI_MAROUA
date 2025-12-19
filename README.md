@@ -128,11 +128,11 @@ This corresponds to an implicit termination of the shell due to end-of-input.
 Both these conditions allow the shell to be closed in a controlled and predictable manner.
 
 ## Question 4 — Displaying the Command Termination Status
-#### Objective:
+### Objective:
 
 After executing a command, the shell updates its prompt to indicate the termination status of the previously executed command.
 
-#### Termination Analysis :
+### Termination Analysis :
 
 When a command finishes, the parent process retrieves its termination status using the system call:
 ```c
@@ -209,7 +209,7 @@ This confirms that :
 - the process did not terminate normally,
 - it was interrupted by signal number 9 (`SIGKILL`).
 
-#### Summary
+### Summary
 
 ```mermaid
 flowchart TD
