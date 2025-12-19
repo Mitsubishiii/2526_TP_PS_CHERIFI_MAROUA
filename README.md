@@ -484,20 +484,121 @@ flowchart TD
     F --> J["Shell ready for next command"]
 ```
 
-## Question 8 - 
+## Question 8 — Pipe redirection (`|`)
 
+### Objective
+This question implements the **pipe operator** `|`.
 
+A pipe connects **two commands** so that:
+- the **output (stdout)** of the left command becomes the **input (stdin)** of the right command.
 
+### Implementation principle
+A pipe is created with:
+```c
+pipe(fds);
+```
+It returns two file descriptors:
+- `fds[0]` → **read end** of the pipe
+- `fds[1]` → `**write end** of the pipe
+Then the shell creates two child processes:
 
+*1. **Child 1 (left command)*** redirects its `STDOUT` to the pipe write end → `dup2(fd_write, STDOUT_FILENO)`
 
+*2. **Child 2 (right command)*** redirects its `STDIN` to the pipe read end → `dup2(fd_read, STDIN_FILENO)`
 
-#### Output
+Finally:
+- the parent closes both ends of the pipe
+- waits for both children with `waitpid()
 
+#### Detect the pipe symbol
+
+The function `find_redirection_and_pipe()` scans `args[] to locate:
+- `<` → `REDIR_IN`
+- `>` → `REDIR_OUT
+- `|` → `PIPE`
+- otherwise → `REDIR_NONE`
+It also stores the symbol position in `position`.
+
+#### Split the command into two parts
+
+Once the pipe symbol `|` is found, the command line is split into two separate argument lists.
+
+```c
+args[position] = NULL;
+char **args2 = &args[position + 1];
+```
+
+This operation creates two independent argument arrays:
+- `args` → left command (before `|`)
+- `args2` → right command (after `|`)
+The `|` symbol itself is removed so it is not passed to `execvp()`.
+
+####  Execute both commands with `pipe + fork + dup2`
+
+The function `execute_complex_command_pipe()` performs the following steps:
+
+##### Create pipe
+
+```c
+pipe(fds);
+```
+
+This creates a unidirectional communication channel:
+- `fds[0]` → read end
+- `fds[1]` → write end
+
+---
+
+##### Fork child 1 (left command)
+
+The first child executes the command located **before** the pipe symbol `|`.
+
+*Actions performed:*
+- redirect `stdout` to the pipe write end
+- close unused file descriptors
+- execute the command with `execvp`
+
+*Conceptual code:*
+
+```c
+dup2(fd_write, STDOUT_FILENO);
+execvp(args[0], args);
+```
+---
+
+##### Fork child 2 (right command)
+
+The second child executes the command located **after** the pipe symbol `|`.
+
+*Actions performed:*
+- redirect `stdin` to the pipe read end
+- close unused file descriptors
+- execute the command with `execvp`
+
+*Conceptual code:*
+```c
+dup2(fd_read, STDIN_FILENO);
+execvp(args2[0], args2);
+```
+---
+
+#####  Parent process
+
+The parent process:
+- closes both ends of the pipe (important to avoid blocking)
+- waits for both child processes to finish
+
+```c
+waitpid(pid1, status, 0);
+waitpid(pid2, status, 0);
+```
+
+This ensures that the pipeline execution is completed before returning to the shell prompt.
+
+### Output
 ![Shell output](img/q80.png)
 
-
-#### Summary
-
+### Summary
 *(**find_redirection_and_pipe**) we only add strcmp for "|" to (**find_redirection**) of question 7.*
 
 ```mermaid
