@@ -370,7 +370,7 @@ flowchart TD
 
 #### Summary
 
-*Pour **find_redirection_and_pipe** on ajoute juste un strcmp sur "|" à find_redirection* de question 7.
+*(**find_redirection_and_pipe**) we only add strcmp for "|" to (**find_redirection**) of question 7.*
 
 ```mermaid
 ---
