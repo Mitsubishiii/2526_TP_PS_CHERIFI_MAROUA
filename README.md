@@ -363,7 +363,7 @@ A Unix program normally communicates using standard file descriptors:
 - `STDIN_FILENO` → input (keyboard)
 - `STDOUT_FILENO` → output (terminal)
   
-Redirection means: **replace STDIN or STDOUT by a file descriptor obtained with** `open(), using:
+Redirection means: **replace STDIN or STDOUT by a file descriptor obtained with** `open()`, using:
 - `dup2(fd, STDIN_FILENO)` for `<`
 - `dup2(fd, STDOUT_FILENO)` for `>`
 
@@ -373,12 +373,18 @@ The redirection must be applied inside the child process (after `fork()` and bef
 
 *1. **Detect the redirection symbol***
 
-The function `find_redirection()` scans the argument array to locate `<` or `>`:
-- if `<` is found → `REDIR_IN`
-- if `>` is found → `REDIR_OUT`
-- otherwise → `REDIR_NONE`
+The function `find_redirection()` is systematically called in main before executing a command.
+
+Its role is to determine whether the entered command includes an input or output redirection.
+
+It scans the argument array `args[]` to detect the presence of a redirection symbol:
+
+- if `<` is found → input redirection `REDIR_IN`
+- if `>` is found → output redirection `REDIR_OUT`
+- otherwise → no redirection `REDIR_NONE`
   
-It also returns the position of the symbol in `args[]`.
+In addition to identifying the redirection type, the function stores the position of the symbol in the argument array.
+This position is later used to apply the redirection and clean the argument list before execution.
 
 *2. **Apply the redirection in the child process***
 
@@ -410,17 +416,17 @@ The function `execute_complex_command_redir()`:
 #### Output
 
 With this implementation:
-- `ls > log.txt` writes the command output into the file instead of the terminal
-- `wc -l < log.txt` reads the file as input instead of waiting for keyboard input
 
   ![Shell output](img/q71.png)
   ![Shell output](img/q72.png)
   
+- The command `ls > log.txt` redirects the output of `ls` into the file instead of the terminal.
+- The command `wc -l < log.txt` reads the file as standard input instead of waiting for keyboard input  and counts the number of lines.
+The output 21 indicates that the directory contains 21 files.
+  
 This reproduces the standard shell behaviour for basic I/O redirections.
 
 #### Summary
-
-*(**find_redirection**) is always called in main. It determines whether the command to be executed is a simple command or a complex command that uses redirection. In addition, it provides the position of the redirection symbol within the argument array.*
 
 ```mermaid
 ---
