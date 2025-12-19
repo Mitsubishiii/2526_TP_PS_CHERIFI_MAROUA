@@ -257,10 +257,67 @@ After executing a command, the shell displays both:
 #### Output
 ![Shell output](img/q50.png)
 
-## Question 6 - 
+##  Question 6 — Executing a Complex Command (with Arguments)
 
+###  Objective
+Until now, the shell could only execute **simple commands without arguments** (e.g. `ls`, `date`).  
+In this question, the shell is extended to support **commands with arguments**.
+This requires two steps:
+1. Split the user input into a command + its arguments.
+2. Execute the command using `execvp()`, which supports an argument array.
+
+###  Implementation Principle
+
+To run a command such as:
+```text
+fortune -s osfortune
+```
+
+the shell must convert the string into an array like:
+
+```c
+args[0] = "fortune";
+args[1] = "-s";
+args[2] = "osfortune";
+args[3] = NULL;
+```
+This array format is mandatory because `execvp()` expects`:
+- args[0] = program name
+- args = NULL-terminated array of arguments
+
+To achieve this, the function:
+```c
+void find_arguments(char *command, char **args);
+```
+splits the string using spaces as separators, and stores each token into `args.
+
+To prevent buffer overflow, the maximum number of tokens stored is limited by:
+```c
+#define ARGS_MAXSIZE 1024
+```
+Once the argument array is ready, execution is done using:
+
+- `fork()` to create a child process
+- `execvp()` to run the command with its arguments
+- `wait()` so the parent (the shell) waits for the child and retrieves its status
+
+Prototype:
+
+```c
+void execute_complex_command(char **command, int *status);
+```
+
+execvp(args[0], args) searches the program in the system PATH (like a real shell).
+If execution fails, the child prints an error using perror("enseash") and exits with code 1.
+
+## Output
+![Shell output](img/q60.png)
+
+The shell can now execute commands with arguments, while still displaying:
+- the exit code or signal (Question 4)
+- the execution time (Question 5)
+  
 #### Summary
-
 
 ```mermaid
 ---
@@ -291,11 +348,6 @@ flowchart TD
     B -->|Parent process| E["wait(status)"]
     E --> F["Shell ready for next command"]
 ```
-
-
-#### Output
-
-![Shell output](img/q60.png)
 
 ## Question 7 - 
 
